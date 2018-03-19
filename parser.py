@@ -126,13 +126,12 @@ def parse_file( fname, edges, transform, screen, color ):
 		elif line == 'ident':
 			ident(transform)
 
-		elif line == 'apply':
-			print "transform:"
-			print_matrix(transform)
-			print "edges:"
-			print_matrix(edges)
-			matrix_mult( transform, edges )
+		elif line == 'clear':
+			edges = []
 
+		elif line == 'apply':
+			matrix_mult( transform, edges )
+            
 		elif line == 'display' or line == 'save':
 			clear_screen(screen)
 			draw_lines(edges, screen, color)
