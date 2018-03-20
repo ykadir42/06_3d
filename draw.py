@@ -1,6 +1,7 @@
 from display import *
 from matrix import *
 from math import *
+import time
 
 def add_box( points, x, y, z, width, height, depth ):
 	vertices = [
@@ -21,11 +22,11 @@ def add_box( points, x, y, z, width, height, depth ):
 				if vertices[i][k] != vertices[j][k]:
 					changes += 1
 			if changes == 1:
-				add_edge(points, vertices[i][0], vertices[i][1], vertices[i][2], vertices[j][0] + 1, vertices[j][1], vertices[j][2])
+				add_edge(points, vertices[i][0], vertices[i][1], vertices[i][2], vertices[j][0], vertices[j][1], vertices[j][2])
 
 def add_sphere( points, cx, cy, cz, r, step ):
-	sphere = generate_sphere(points, cx, cy, cz, r, step)
-	points.append(sphere)
+	points += generate_sphere(points, cx, cy, cz, r, step)
+
 def generate_sphere( points, cx, cy, cz, r, step ):
 	ans = []
 	phi_step = 0
@@ -37,17 +38,28 @@ def generate_sphere( points, cx, cy, cz, r, step ):
 			x = r * math.cos(math.pi * theta_t) + cx
 			y = r * math.sin(math.pi * theta_t) * math.cos(2*math.pi * phi_t) + cy
 			z = r * math.sin(math.pi * theta_t) * math.sin(2*math.pi * phi_t) + cz
-			add_edge(ans, x, y, z, x, y, z)
+			add_edge(ans, x, y, z, x + 1, y, z)
 			theta_step += 1
 		phi_step += 1
-	print "ans:"
-	print_matrix(ans)
 	return ans
 
 def add_torus( points, cx, cy, cz, r0, r1, step ):
-	pass
+	points += generate_torus(points, cx, cy, cz, r0, r1, step)
 def generate_torus( points, cx, cy, cz, r0, r1, step ):
-	pass
+	ans = []
+	phi_step = 0
+	while phi_step <= step:
+		phi_t = float(phi_step)/step
+		theta_step = 0
+		while theta_step <= step:
+			theta_t = float(theta_step)/step
+			x = (r0 * math.cos(2*math.pi * theta_t) + r1) * math.cos(2*math.pi * phi_t) + cx
+			y = r0 * math.sin(2*math.pi * theta_t) + cy
+			z = (r0 * math.cos(2*math.pi * theta_t) + r1) * math.sin(2*math.pi * phi_t) + cz
+			add_edge(ans, x, y, z, x + 1, y, z)
+			theta_step += 1
+		phi_step += 1
+	return ans
 
 def add_circle( points, cx, cy, cz, r, step ):
 	x0 = r + cx
